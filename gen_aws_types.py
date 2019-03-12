@@ -112,7 +112,7 @@ def create_module(service_name: str):
     )
 
 
-for service_name in ['s3', 'waf', 'waf-regional', 'dynamodb', 'shield', 'ec2']:
+for service_name in ['s3', 'waf', 'waf-regional', 'dynamodb', 'shield', 'ec2', 'organizations', 'ssm', 'sts', 'config', 'sns', 'sqs', 'rds']:
     create_module(service_name)
 
 assert not unknown_type_names, "There are unknown_type_names: {}".format(unknown_type_names)
