@@ -23,6 +23,7 @@ type_name_mapping = {'string': str.__name__,
                      'long': int.__name__,
                      'blob': bytes.__name__,
                      'list': list.__name__,
+                     'double': int.__name__,
                      }
 
 
@@ -112,7 +113,8 @@ def create_module(service_name: str):
     )
 
 
-for service_name in ['s3', 'waf', 'waf-regional', 'dynamodb', 'shield', 'ec2', 'organizations', 'ssm', 'sts', 'config', 'sns', 'sqs', 'rds']:
+for service_name in ['s3', 'waf', 'waf-regional', 'dynamodb', 'shield', 'ec2', 'organizations', 'ssm', 'sts', 'config',
+                     'sns', 'sqs', 'rds', 'cloudwatch', 'kinesis']:
     create_module(service_name)
 
 assert not unknown_type_names, "There are unknown_type_names: {}".format(unknown_type_names)
