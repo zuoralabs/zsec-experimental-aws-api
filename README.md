@@ -36,14 +36,27 @@ the type hinting only works if you have `boto3_nice`.
 Type hinting is handled by applying `typing.overload` to `boto3_nice.Session.client`
 and using `typing.NewType` in the overloaded type annotations.
 
-If boto3_nice is definitely installed, then the client can be created more simply:
+If `boto3_nice` is definitely installed, then the client can be created more simply:
 ~~~python
 import boto3_nice
 
 s3 = boto3_nice.Session().s3_client(region_name='us-east-1')
+# now you will get code completion for `s3`. Try completing on e.g. `s3.head_`.
 ~~~
 
 
+## Comparison to alternatives
+
+- vs `botostubs`: to use `botostubs` you need to add annotations. With `boto3_nice`, type inference
+  happens more automatically. Consider also that if you want compatibility with runtimes that don't include stubs, 
+  it may be easier with `boto3_nice`. Otherwise, `botostubs` and `boto3_nice` both use `boto3` internal metadata
+  for codegen.
+- vs `wavycloud/pyboto3`: `pyboto3` appears to use the online docs to generate code. This does
+  not seem reliable in the long term. While the `boto3` internal metadata API may also change, I prefer to
+  rely on that over parsing html. Furthermore, to take advantage of `pyboto3` you need to add annotations to your code. 
+  See the "vs `botostubs`" bullet point for some discussion on that.
+  
+  
 ## Why not ...?
 
 By using `typing_extensions.Literal`, it would be possible provide `.pyi` files
