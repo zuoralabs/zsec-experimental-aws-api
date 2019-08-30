@@ -16,3 +16,5 @@ xx = boto3.Session().client(config_service_name)
 ans = xx.describe_compliance_by_config_rule(
     ConfigRuleNames=['SecEc2RuleConfigRule']
 )
+
+print(ans)

@@ -84,14 +84,8 @@ def method_def(service_name: str, operation_name: str):
     )
         for k in required_members + optional_members]
 
-    formatted_types = textwrap.dedent('\n'.join('''
-    class {type_name}:
-        shape: {shape_name}
-    '''.format(type_name=k, shape_name=v) for k, v in type_names.items()))
-
     return textwrap.dedent('''def {method_name}({members}): ...''').format(
         method_name=method_name,
-        types=textwrap.indent(formatted_types, prefix=' '*4),
         type_name=class_name,
         members=', '.join(chain(('self',), formatted_members)),
         operation_name=operation_name,
@@ -105,7 +99,7 @@ def create_module(package_path: Path, service_name: str):
     module_name = '{}_stubs'.format(snakecase(service_name))
     class_name = '{}_client_type'.format(snakecase(service_name))
     client_maker_name = '{}_client'.format(snakecase(service_name))
-    sm = core_sess.get_service_model(service_name)
+    sm: botocore.session.ServiceModel = core_sess.get_service_model(service_name)
 
     client_maker = textwrap.dedent("""
     def {client_maker_name}(self: 'Session', region_name: str = None) -> {class_name}:
@@ -135,6 +129,16 @@ def create_package(service_names: Iterable[str]):
                        format(module_name=module_name, class_name=class_name))
         client_makers.append(client_maker)
 
+    client_overloads = [
+        textwrap.dedent("""
+        @overload
+        def client(self, service_name: {}_service_name_type,
+                   region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+                   ) -> BaseClient: ...
+        """).strip().format(snakecase(service_name))
+        for service_name in service_names
+    ]
+
     text = textwrap.dedent("""
     import boto3 as _boto3
     {imports}
@@ -144,8 +148,34 @@ def create_package(service_names: Iterable[str]):
     {members}
     """).format(imports='\n'.join(imports),
                 members=textwrap.indent('\n\n'.join(client_makers), ' '*4)).lstrip()
-
     package_path.joinpath('__init__.py').write_text(text)
+
+    text = textwrap.dedent("""
+    import boto3 as _boto3
+    from typing import overload
+    from botocore.client import BaseClient
+    from .service_names import *
+    {imports}
+    
+    
+    class Session(_boto3.Session):
+    {members}
+    """).format(imports='\n'.join(imports),
+                members=textwrap.indent('\n\n'.join(client_overloads + client_makers), ' '*4)).lstrip()
+    package_path.joinpath('__init__.pyi').write_text(text)
+
+    service_names_template = textwrap.dedent("""
+    from typing import NewType
+    
+    
+    {body}
+    """).strip()
+    service_names_defs = [textwrap.dedent("""
+    {ss}_service_name_type = NewType('{ss}_service_name', str)
+    {ss}_service_name: {ss}_service_name_type = {ss}_service_name_type('{ss}')
+    """).lstrip().format(ss=snakecase(service_name)) for service_name in service_names]
+    service_names_text = service_names_template.format(body='\n'.join(service_names_defs))
+    package_path.joinpath('service_names.py').write_text(service_names_text)
 
 
 assert not unknown_type_names, "There are unknown_type_names: {}".format(unknown_type_names)

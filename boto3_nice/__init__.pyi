@@ -1,4 +1,7 @@
 import boto3 as _boto3
+from typing import overload
+from botocore.client import BaseClient
+from .service_names import *
 from .s3_stubs import s3_client_type
 from .waf_stubs import waf_client_type
 from .waf_regional_stubs import waf_regional_client_type
@@ -15,26 +18,82 @@ from .rds_stubs import rds_client_type
 from .cloudwatch_stubs import cloudwatch_client_type
 from .kinesis_stubs import kinesis_client_type
 
-from typing import overload
-from botocore.client import BaseClient
-from .service_names import *
-
 
 class Session(_boto3.Session):
     @overload
-    def client(self, service_name: str,
+    def client(self, service_name: s3_service_name_type,
                region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
                ) -> BaseClient: ...
 
     @overload
-    def client(self, service_name: s3_service_name_type,
+    def client(self, service_name: waf_service_name_type,
                region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
-               ) -> s3_client_type: ...
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: waf_regional_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: dynamodb_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: shield_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: ec2_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: organizations_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: ssm_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: sts_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
 
     @overload
     def client(self, service_name: config_service_name_type,
                region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
-               ) -> config_client_type: ...
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: sns_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: sqs_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: rds_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: cloudwatch_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
+
+    @overload
+    def client(self, service_name: kinesis_service_name_type,
+               region_name=None, api_version=None, use_ssl=True, verify=None, endpoint_url=None, aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, config=None,
+               ) -> BaseClient: ...
 
     def s3_client(self: 'Session', region_name: str = None) -> s3_client_type:
         return self.client('s3', region_name=region_name)

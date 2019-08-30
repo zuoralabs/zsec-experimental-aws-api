@@ -14,7 +14,6 @@ from .sqs_stubs import sqs_client_type
 from .rds_stubs import rds_client_type
 from .cloudwatch_stubs import cloudwatch_client_type
 from .kinesis_stubs import kinesis_client_type
-from .service_names import *
 
 
 class Session(_boto3.Session):
